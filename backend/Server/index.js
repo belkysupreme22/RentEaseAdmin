@@ -4,12 +4,10 @@ const adminRoutes = require("./routes/admin");
 const cors = require("cors");
 
 const corsOptions = {
-  origin: "*", // Allow requests from this origin (your React frontend)
-  methods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allow these headers in requests
-  exposedHeaders: ["Content-Length", "X-Requested-With"], // Expose these headers to the client
-  credentials: true, // Allow cookies to be sent with requests
-  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: "*", // Replace with your front-end URL
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // HTTP methods allowed
+  credentials: true, // Enable credentials (cookies, authentication headers, etc.)
+  optionsSuccessStatus: 204, // Response status for preflight requests
 };
 
 const app = express();
