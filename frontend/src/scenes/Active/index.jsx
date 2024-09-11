@@ -16,7 +16,7 @@ const Active = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/admin/properties/active?page=${page}&limit=6`
+        `https://renteaseadmin.onrender.com/admin/properties/active?page=${page}&limit=6`
       );
       const data = await response.json();
       setActivePosts(data.properties);
