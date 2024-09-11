@@ -28,7 +28,7 @@ const Commission = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/balance?user_id=66c8ee48afb3bb01a41b0f87");
+      const response = await axios.get("http://localhost:5000/admin/balance?user_id=66e05fd6bfa431de8dafab89");
       setBalance(response.data.balance);
       setBalanceVisible(true);
     } catch (err) {
@@ -44,7 +44,7 @@ const Commission = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/transactions");
+      const response = await axios.get("http://localhost:5000/admin/transactions");
       const sortedTransactions = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setTransactions(sortedTransactions);
       setFilteredTransactions(sortedTransactions); // Initially, show all transactions

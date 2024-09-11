@@ -16,7 +16,7 @@ const Active = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://renteaseadmin.onrender.com/admin/properties/active?page=${page}&limit=6`
+        `http://localhost:5000/admin/properties/active?page=${page}&limit=6`
       );
       const data = await response.json();
       setActivePosts(data.properties);
@@ -79,7 +79,7 @@ const Active = () => {
                   <CardMedia
                     component="img"
                     height="140"
-                    image={`https://rentease-1-n9w2.onrender.com/uploads/${post.image[0]}`}
+                    image={`http://10.139.167.95:8000/uploads/${post.image[0]}`}
                     alt={post.property_name}
                     sx={{ borderRadius: '16px 16px 0 0' }}
                   />

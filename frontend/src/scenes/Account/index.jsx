@@ -14,7 +14,7 @@ const Account = () => {
   const fetchProfiles = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/profiles");
+      const response = await fetch("http://localhost:5000/admin/profiles");
       const data = await response.json();
       setProfiles(data);
     } catch (error) {
@@ -27,7 +27,7 @@ const Account = () => {
   const handleVerify = async (profileId) => {
     try {
       setLoading(true);
-      await fetch(`https://renteaseadmin.onrender.com/admin/profiles/verify/${profileId}`, {
+      await fetch(`http://localhost:5000/admin/profiles/verify/${profileId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const Account = () => {
   const handleReject = async (profileId) => {
     try {
       setLoading(true);
-      await fetch(`https://renteaseadmin.onrender.com/admin/profiles/reject/${profileId}`, {
+      await fetch(`http://localhost:5000/admin/profiles/reject/${profileId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +164,7 @@ const Account = () => {
                 </Typography>
                   {selectedProfile.id_image ? (
                     <img
-                      src={`https://rentease-1-n9w2.onrender.com/uploads/${selectedProfile.id_image}`}
+                      src={`http://10.139.167.95:8000/uploads/${selectedProfile.id_image}`}
                       alt="ID Image"
                       style={{ maxWidth: '100%', borderRadius: '8px' }}
                     />

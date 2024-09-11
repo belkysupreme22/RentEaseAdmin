@@ -13,7 +13,7 @@ const Both = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/users/both");
+      const response = await fetch("http://localhost:5000/admin/users/both");
       const data = await response.json();
       setUsers(data);
     } catch (error) {

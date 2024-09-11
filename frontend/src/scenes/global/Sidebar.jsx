@@ -84,7 +84,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get("https://renteaseadmin.onrender.com/admin/profile");
+        const response = await axios.get("http://localhost:5000/admin/profile");
         setAdminData({
           username: response.data.username || 'Username',
           role: response.data.role || 'Role',
@@ -117,8 +117,8 @@ const Sidebar = () => {
     fetchVerificationCounts();
     fetchPropertiesCount();
 
-    const intervalId1 = setInterval(fetchVerificationCounts, 10000); // 10 seconds
-    const intervalId2 = setInterval(fetchPropertiesCount, 10000); // 10 seconds
+    const intervalId1 = setInterval(fetchVerificationCounts, 1000); // 10 seconds
+    const intervalId2 = setInterval(fetchPropertiesCount, 1000); // 10 seconds
 
     return () => {
       clearInterval(intervalId1);

@@ -29,10 +29,10 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [usersResponse, propertiesResponse, transactionsResponse, rentsResponse] = await Promise.all([
-          axios.get("https://renteaseadmin.onrender.com/admin/total-users"),
-          axios.get("https://renteaseadmin.onrender.com/admin/total-properties"),
-          axios.get("https://renteaseadmin.onrender.com/admin/total-transactions"),
-          axios.get("https://renteaseadmin.onrender.com/admin/total-rents"),
+          axios.get("http://localhost:5000/admin/total-users"),
+          axios.get("http://localhost:5000/admin/total-properties"),
+          axios.get("http://localhost:5000/admin/total-transactions"),
+          axios.get("http://localhost:5000/admin/total-rents"),
         ]);
 
         setTotalUsers(usersResponse.data.totalUsers);

@@ -27,7 +27,7 @@ const Property = () => {
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/properties/pending");
+      const response = await fetch("http://localhost:5000/admin/properties/pending");
       const data = await response.json();
       setProperties(data);
     } catch (error) {
@@ -40,7 +40,7 @@ const Property = () => {
   const handleAccept = async (propertyId) => {
     try {
       setLoading(true);
-      await fetch(`https://renteaseadmin.onrender.com/admin/properties/accept/${propertyId}`, {
+      await fetch(`http://localhost:5000/admin/properties/accept/${propertyId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const Property = () => {
   const handleReject = async (propertyId) => {
     try {
       setLoading(true);
-      await fetch(`https://renteaseadmin.onrender.com/admin/properties/reject/${propertyId}`, {
+      await fetch(`http://localhost:5000/admin/properties/reject/${propertyId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ const Property = () => {
                       <CardMedia
                         component="img"
                         height="140"
-                        image={`https://rentease-1-n9w2.onrender.com/uploads/${property.image[imageData[property._id]?.currentIndex || 0]}`}
+                        image={`http://10.139.167.95:8000/uploads/${property.image[imageData[property._id]?.currentIndex || 0]}`}
                         alt="property"
                         sx={{ borderRadius: '8px', cursor: 'pointer' }}
                         onClick={() => handleOpenModal(property.image[imageData[property._id]?.currentIndex || 0])}
@@ -203,7 +203,7 @@ const Property = () => {
 
                   <Box display="flex" alignItems="center" mt="10px" gap="10px">
                     <img
-                      src={`https://rentease-1-n9w2.onrender.com/uploads/${property.ownerProfilePic}`}
+                      src={`http://10.139.167.95:8000/uploads/${property.ownerProfilePic}`}
                       alt="Owner"
                       style={{
                         width: '50px',
@@ -271,7 +271,7 @@ const Property = () => {
             <Close />
           </IconButton>
           <img
-            src={`https://rentease-1-n9w2.onrender.com/uploads/${selectedImage}`}
+            src={`http://10.139.167.95:8000/uploads/${selectedImage}`}
             alt="Property"
             style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
           />

@@ -1,27 +1,70 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const PropertySchema = new mongoose.Schema({
-  property_name: { type: String, required: true },
-  image: { type: [String], required: true },
-  description: { type: String, required: true },
-  price: { type: Number, required: true },
-  location: {
-    address: { type: String, required: true },
+const PropertySchema = new Schema({
+  property_name: {
+    type: String,
+    required: true
   },
-  category: { type: String, required: true },
-  status: { type: Boolean, required: true },
+  image: {
+    type: [String],  // Array of image file names
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  location: {
+   
+    latitude: {
+      type: Number,
+      required: false  // Optional in case not always available
+    },
+    longitude: {
+      type: Number,
+      required: false  // Optional in case not always available
+    }
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: Boolean,
+    default: true  // Assuming 'true' means active
+  },
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+    ref: 'User',  // Reference to the User model
+    required: true
   },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-  average_rating: { type: Number, default: 0 },
   verification: {
     type: String,
-    enum: ["pending", "verified", "rejected"],
+    enum: ['pending', 'verified', 'rejected'],
+    default: 'pending'
   },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-module.exports = mongoose.model("Property", PropertySchema);
+// Update 'updatedAt' before saving
+PropertySchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+module.exports = mongoose.model('Property', PropertySchema);

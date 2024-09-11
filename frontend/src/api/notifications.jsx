@@ -1,7 +1,7 @@
 // src/api/notifications.js
 import axios from 'axios';
 
-const API_BASE_URL = 'https://renteaseadmin.onrender.com/admin';
+const API_BASE_URL = 'http://localhost:5000/admin';
 
 export const fetchVerifiedProperties = async () => {
   const response = await axios.get(`${API_BASE_URL}/properties/verified`);

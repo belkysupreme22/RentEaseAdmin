@@ -13,7 +13,7 @@ const Owners = () => {
   const fetchOwners = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/users/landlord");
+      const response = await fetch("http://localhost:5000/admin/users/landlord");
       const data = await response.json();
       setOwners(data);
     } catch (error) {
@@ -64,7 +64,7 @@ const Owners = () => {
                 <CardContent>
                   <Box display="flex" alignItems="center" mb={2}>
                     <Avatar
-                      src={`https://rentease-1-n9w2.onrender.com/uploads/${owner.profile_picture}`}
+                      src={`http://10.139.167.95:8000/uploads/${owner.profile_picture}`}
                       alt={owner.user_name}
                       sx={{ width: 48, height: 48, marginRight: 2 }}
                     />

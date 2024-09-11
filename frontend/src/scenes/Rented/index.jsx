@@ -19,7 +19,7 @@ const Rented = () => {
   // Function to fetch rented items
   const fetchRentedItems = async () => {
     try {
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/rented");
+      const response = await axios.get("http://localhost:5000/admin/rented");
       setRentedItems(response.data);
     } catch (err) {
       setError("Failed to fetch rented items.");
@@ -52,6 +52,10 @@ const Rented = () => {
         </Box>
       ) : error ? (
         <Typography color="error">{error}</Typography>
+      ) : rentedItems.length === 0 ? (  // Display this if there are no rented items
+        <Typography variant="h6" align="center" color="textSecondary">
+          There are no rented items at the moment.
+        </Typography>
       ) : (
         <List>
           {rentedItems.map((item, index) => (
@@ -70,7 +74,7 @@ const Rented = () => {
               }}
             >
               <Avatar
-                src={`https://rentease-1-n9w2.onrender.com/uploads/${item.property_image}`}
+                src={`http://10.139.167.95:8000/uploads/${item.property_image}`}
                 alt="Property Image"
                 sx={{ width: 100, height: 100, cursor: 'pointer' }}
                 onClick={() => handleImageClick(item.property_image)}
@@ -152,7 +156,7 @@ const Rented = () => {
           </IconButton>
           <Box
             component="img"
-            src={`https://rentease-1-n9w2.onrender.com/uploads/${selectedImage}`}
+            src={`http://10.139.167.95:8000/uploads/${selectedImage}`}
             alt="Enlarged Property"
             sx={{
               width: '100%',

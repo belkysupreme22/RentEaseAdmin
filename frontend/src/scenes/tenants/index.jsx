@@ -13,7 +13,7 @@ const Tenants = () => {
   const fetchTenants = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/users/tenant");
+      const response = await fetch("http://localhost:5000/admin/users/tenant");
       const data = await response.json();
       setTenants(data);
     } catch (error) {
@@ -68,7 +68,7 @@ const Tenants = () => {
                 <CardContent>
                   <Box display="flex" alignItems="center" mb={2}>
                   <Avatar
-                      src={`https://rentease-1-n9w2.onrender.com/uploads/${tenant.profile_picture}`}
+                      src={`http://10.139.167.95:8000/uploads/${tenant.profile_picture}`}
                       alt={tenant.user_name}
                       sx={{ width: 48, height: 48, marginRight: 2 }}
                     />

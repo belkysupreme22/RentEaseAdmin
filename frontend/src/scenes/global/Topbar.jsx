@@ -92,7 +92,7 @@ const Topbar = ({ onLogout }) => {
 
     const intervalId = setInterval(() => {
       fetchNotifications(); // Fetch notifications every 10 seconds
-    }, 10000); // 10000 milliseconds = 10 seconds
+    }, 1000); // 10000 milliseconds = 10 seconds
 
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);

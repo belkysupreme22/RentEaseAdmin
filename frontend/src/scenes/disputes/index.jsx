@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Button, Typography, Grid, Paper, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from "@mui/material";
-import ImageIcon from '@mui/icons-material/Image';
+import { Box, Button, Typography, Grid, Paper, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 
 const DisputesPage = () => {
   const [disputes, setDisputes] = useState([]);
@@ -14,7 +13,7 @@ const DisputesPage = () => {
   useEffect(() => {
     const fetchDisputes = async () => {
       try {
-        const response = await axios.get('https://renteaseadmin.onrender.com/admin/disputes'); // Update with your backend URL
+        const response = await axios.get('http://localhost:5000/admin/disputes'); // Update with your backend URL
         setDisputes(response.data);
       } catch (error) {
         setError(error.message);
@@ -46,61 +45,67 @@ const DisputesPage = () => {
         Disputes Section
       </Typography>
 
-      {/* Disputes Grid */}
-      <Grid container spacing={4}>
-        {disputes.map((dispute) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={dispute._id}>
-            <Paper elevation={3} sx={{ padding: "16px", position: "relative" }}>
-              {/* Dispute Thumbnail Images */}
-              <Box display="flex" flexDirection="row" gap={1} mb={2}>
-                {dispute.image.map((img, index) => (
-                  <img
-                    key={index}
-                    src={`http://10.139.165.212:8000/uploads/${img}`}
-                    alt={`Dispute Image ${index + 1}`}
-                    style={{ width: "80px", height: "80px", cursor: "pointer", objectFit: "cover" }}
-                    onClick={() => handleOpenDialog(`http://10.139.165.212:8000/uploads/${img}`)}
-                  />
-                ))}
-              </Box>
+      {/* No Disputes Text */}
+      {disputes.length === 0 ? (
+        <Typography variant="h6" color="textSecondary" align="center">
+          No disputes available at the moment.
+        </Typography>
+      ) : (
+        <Grid container spacing={4}>
+          {disputes.map((dispute) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={dispute._id}>
+              <Paper elevation={3} sx={{ padding: "16px", position: "relative" }}>
+                {/* Dispute Thumbnail Images */}
+                <Box display="flex" flexDirection="row" gap={1} mb={2}>
+                  {dispute.image.map((img, index) => (
+                    <img
+                      key={index}
+                      src={`http://10.139.167.95:8000/uploads/${img}`}
+                      alt={`Dispute Image ${index + 1}`}
+                      style={{ width: "80px", height: "80px", cursor: "pointer", objectFit: "cover" }}
+                      onClick={() => handleOpenDialog(`http://10.139.167.95:8000/uploads/${img}`)}
+                    />
+                  ))}
+                </Box>
 
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Description
-              </Typography>
-              <Typography variant="body1" paragraph>
-                {dispute.description}
-              </Typography>
-              
-              <Typography variant="subtitle1" color="textSecondary">
-                Estimation: ${dispute.estimation}
-              </Typography>
-    
-              <Typography variant="subtitle1" color="textSecondary">
-                Property: {dispute.property ? dispute.property.name : "N/A"}
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                Property Price: ${dispute.property ? dispute.property.price : "N/A"}
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                Solved: {dispute.solved ? "Yes" : "No"}
-              </Typography>
-        
-              <Typography variant="subtitle1" color="textSecondary">
-                Disagreed: {dispute.disagree ? "Yes" : "No"}
-              </Typography>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Description
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {dispute.description}
+                </Typography>
 
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ marginTop: "16px" }}
-                onClick={() => {/* Add your resolve logic here */}}
-              >
-                Resolve
-              </Button>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Estimation: ${dispute.estimation}
+                </Typography>
+
+                <Typography variant="subtitle1" color="textSecondary">
+                  Property: {dispute.property ? dispute.property.name : "N/A"}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Property Price: ${dispute.property ? dispute.property.price : "N/A"}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Solved: {dispute.solved ? "Yes" : "No"}
+                </Typography>
+
+                <Typography variant="subtitle1" color="textSecondary">
+                  Disagreed: {dispute.disagree ? "Yes" : "No"}
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginTop: "16px" }}
+                  onClick={() => {/* Add your resolve logic here */}}
+                >
+                  Resolve
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       {/* Dialog for Viewing Enlarged Image */}
       {selectedImage && (

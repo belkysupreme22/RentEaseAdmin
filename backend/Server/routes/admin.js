@@ -8,9 +8,7 @@ const Account = require("../models/Account");
 const Transaction = require("../models/transaction");
 const Booking = require("../models/booking");
 const Terms = require("../models/Terms");
-const Dispute = require("../models/disputes")
-
-
+const Dispute = require("../models/disputes");
 
 // Route to get active properties with pagination
 router.get("/properties/active", async (req, res) => {
@@ -42,7 +40,6 @@ router.get("/properties/active", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 // Route to get users with both roles
 router.get("/users/both", async (req, res) => {
@@ -148,7 +145,7 @@ router.get("/users/tenant", async (req, res) => {
 router.get("/properties/pending", async (req, res) => {
   try {
     // Fetch all properties with 'verification' status as 'verified'
-    const properties = await Property.find({verification: "pending"});
+    const properties = await Property.find({ verification: "pending" });
 
     // Fetch owner details from the Profile schema
     const propertiesWithOwnerInfo = await Promise.all(
@@ -164,6 +161,8 @@ router.get("/properties/pending", async (req, res) => {
           image: property.image,
           description: property.description,
           price: property.price,
+          location: property.location,
+          address: property.address,
           category: property.category,
           createdAt: property.createdAt,
           verification: property.verification,
@@ -597,27 +596,30 @@ router.delete("/terms/:id", async (req, res) => {
 });
 
 // Get all disputes
-router.get('/disputes', async (req, res) => {
+router.get("/disputes", async (req, res) => {
   try {
-    const disputes = await Dispute.find({disagree: "true"});
+    const disputes = await Dispute.find({ disagree: "true" });
 
     const disputesWithDetails = await Promise.all(
       disputes.map(async (dispute) => {
         // Find the booking related to this dispute
-        const booking = await Booking.findById(dispute.bookingId).populate('property_id', 'property_name price'); // Ensure 'property_id' is correctly populated
+        const booking = await Booking.findById(dispute.bookingId).populate(
+          "property_id",
+          "property_name price"
+        ); // Ensure 'property_id' is correctly populated
 
         if (booking && booking.property_id) {
           return {
             ...dispute._doc,
             property: {
               name: booking.property_id.property_name,
-              price: booking.property_id.price
-            }
+              price: booking.property_id.price,
+            },
           };
         } else {
           return {
             ...dispute._doc,
-            property: null
+            property: null,
           };
         }
       })
