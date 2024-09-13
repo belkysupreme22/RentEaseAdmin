@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import { Box, IconButton, useTheme, Typography, TextField, Button, InputAdornment } from "@mui/material";
+import { Box, IconButton, useTheme, Typography, TextField, Button, InputAdornment, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ColorModeContext, tokens } from "../../theme";
 import { Typewriter } from "react-simple-typewriter";
@@ -37,39 +37,40 @@ const Topbar = () => {
   );
 };
 
-const LoginForm = ({onLogin}) => {
+const LoginForm = ({ onLogin }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const pageBackgroundColor = theme.palette.mode === 'light' ? '#f8f9fa' : colors.primary[500];
-  const formBackgroundColor = theme.palette.mode === 'light' ? '#ffffff' : colors.primary[400];
-  const inputBackgroundColor = theme.palette.mode === 'light' ? '#ffffff' : formBackgroundColor;
-  const textColor = theme.palette.mode === 'light' ? '#333333' : '#f3e9d3';
-  const buttonColor = theme.palette.mode === 'light' ? '#a4a9fc' : colors.primary[300];
+  const pageBackgroundColor = theme.palette.mode === "light" ? "#f8f9fa" : colors.primary[500];
+  const formBackgroundColor = theme.palette.mode === "light" ? "#ffffff" : colors.primary[400];
+  const inputBackgroundColor = theme.palette.mode === "light" ? "#ffffff" : formBackgroundColor;
+  const textColor = theme.palette.mode === "light" ? "#333333" : "#f3e9d3";
+  const buttonColor = theme.palette.mode === "light" ? "#a4a9fc" : colors.primary[300];
 
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Track loading state
 
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    setLoading(true); // Start loading
 
     try {
-      // Adjust payload to match backend expectations
-      const response = await axios.post("https://renteaseadmin.onrender.com/admin/signIn", { 
-        user_name: username, // Match backend field names
+      const response = await axios.post("https://renteaseadmin.onrender.com/admin/signIn", {
+        user_name: username,
         password
       });
       localStorage.setItem("token", response.data.token);
-      onLogin(); 
-    
+      onLogin();
+      setLoading(false); // Stop loading
     } catch (error) {
-      // Improved error handling
       const errorMessage = error.response && error.response.data ? error.response.data.message : "An unexpected error occurred";
       setError(errorMessage);
+      setLoading(false); // Stop loading on error
     }
   };
 
@@ -89,7 +90,7 @@ const LoginForm = ({onLogin}) => {
         bgcolor={formBackgroundColor}
         p={6}
         borderRadius="8px"
-        boxShadow={theme.palette.mode === 'light' ? "0px 4px 12px rgba(0, 0, 0, 0.1)" : "0px 4px 12px rgba(0, 0, 0, 0.3)"}
+        boxShadow={theme.palette.mode === "light" ? "0px 4px 12px rgba(0, 0, 0, 0.1)" : "0px 4px 12px rgba(0, 0, 0, 0.3)"}
         width="100%"
         maxWidth="500px"
         mt={4}
@@ -210,8 +211,13 @@ const LoginForm = ({onLogin}) => {
             }
           }}
           onClick={handleLogin}
+          disabled={loading} // Disable button when loading
         >
-          Login
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: 'white' }} /> // Show loading spinner
+          ) : (
+            "Login" // Show button text
+          )}
         </Button>
       </Box>
     </Box>
