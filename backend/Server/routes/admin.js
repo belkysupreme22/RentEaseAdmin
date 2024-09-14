@@ -631,4 +631,98 @@ router.get("/disputes", async (req, res) => {
   }
 });
 
+router.get("/transactions/weekly", async (req, res) => {
+  try {
+    // Get the current date and the start of the week (Sunday)
+    const today = new Date();
+    const startOfWeek = new Date(
+      today.setDate(today.getDate() - today.getDay())
+    );
+
+    // Fetch transactions created from the start of the week onwards and group by the day of the week
+    const transactions = await Transaction.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startOfWeek },
+          status: "completed",
+        },
+      },
+      {
+        $project: {
+          dayOfWeek: { $dayOfWeek: "$createdAt" }, // Get day of the week (1 = Sunday, 7 = Saturday)
+          amount: 1,
+        },
+      },
+      {
+        $group: {
+          _id: "$dayOfWeek", // Group by day of the week
+          totalAmount: { $sum: "$amount" }, // Sum the transaction amounts for each day
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by day of the week (1 = Sunday, 7 = Saturday)
+      },
+    ]);
+
+    // Map day of the week to human-readable names
+    const dayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    // Format the response to include the day names
+    const formattedTransactions = transactions.map((transaction) => ({
+      day: dayNames[transaction._id - 1], // Convert day of the week number to name
+      totalAmount: transaction.totalAmount,
+    }));
+
+    res.json(formattedTransactions);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching transactions", error });
+  }
+});
+
+// Route to get booking count per day of the week based on createdAt time
+router.get("/bookings/count-per-day-of-week", async (req, res) => {
+  try {
+    const bookingsPerDayOfWeek = await Booking.aggregate([
+      {
+        $group: {
+          _id: { $dayOfWeek: "$createdAt" }, // Group by day of the week (1=Sunday, 7=Saturday)
+          count: { $sum: 1 }, // Count the number of bookings for each day of the week
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by day of the week
+      },
+    ]);
+
+    // Map the _id numbers to actual day names
+    const dayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const formattedResponse = bookingsPerDayOfWeek.map((item) => ({
+      day: dayNames[item._id - 1], // MongoDB returns 1 for Sunday, so subtract 1 for array indexing
+      count: item.count,
+    }));
+
+    res.json(formattedResponse);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
 module.exports = router;

@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Typography, Grid, Card, CardContent, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Box, Button, Typography, Grid, Card, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Avatar, useTheme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
 
 const Both = () => {
+  const theme = useTheme();
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedUser, setSelectedUser] = useState(null); // State to store the selected user's details
-  const [open, setOpen] = useState(false); // State to control the dialog visibility
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [imageOpen, setImageOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/users/both");
+      const response = await fetch("http://localhost:5000/admin/users/both");
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -28,7 +31,6 @@ const Both = () => {
   }, []);
 
   const handleViewDetails = (user) => {
-    // Check if the user profile is complete
     const isProfileComplete = user.first_name && user.phone_number && user.address;
 
     if (isProfileComplete) {
@@ -39,10 +41,22 @@ const Both = () => {
     }
   };
 
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setImageOpen(true);
+  };
+
   const handleCloseDialog = () => {
     setOpen(false);
     setSelectedUser(null);
   };
+
+  const handleCloseImageDialog = () => {
+    setImageOpen(false);
+    setSelectedImage("");
+  };
+
+  const isDarkMode = theme.palette.mode === "dark";
 
   return (
     <Box m="20px">
@@ -53,7 +67,7 @@ const Both = () => {
           <CircularProgress size={50} sx={{ color: '#3498db' }} />
         </Box>
       ) : users.length === 0 ? (
-        <Typography variant="h6" textAlign="center">
+        <Typography variant="h6" textAlign="center" color={isDarkMode ? "white" : "black"}>
           No users with both roles available.
         </Typography>
       ) : (
@@ -62,20 +76,35 @@ const Both = () => {
             <Grid item xs={12} sm={6} md={4} key={user._id}>
               <Card
                 sx={{
-                  backgroundColor: 'transparent',
-                  boxShadow: 'none',
+                  backgroundColor: isDarkMode ? '#2c2c2c' : '#f5f5f5', // Adjusted background color
+                  boxShadow: isDarkMode ? '0 4px 8px rgba(255, 255, 255, 0.2)' : '0 4px 8px rgba(0, 0, 0, 0.2)',
                   borderRadius: '16px',
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: isDarkMode ? '1px solid #444' : '1px solid #ddd',
                 }}
               >
-                <CardContent>
-                  <Typography variant="h5" component="div">
+                <Avatar
+                  src={`http://10.139.161.59:8000/uploads/${user.profile_picture}`}
+                  alt={user.user_name}
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    marginRight: 2,
+                    border: '2px solid #3498db',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => handleImageClick(`http://10.139.161.59:8000/uploads/${user.profile_picture}`)}
+                />
+                <Box>
+                  <Typography variant="h5" component="div" sx={{ display: 'flex', alignItems: 'center', fontSize: '1.5rem', color: isDarkMode ? 'white' : 'black' }}>
                     {user.user_name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color={isDarkMode ? 'white' : 'text.secondary'}>
                     <strong>Email:</strong> {user.email}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color={isDarkMode ? 'white' : 'text.secondary'}>
                     <strong>Role:</strong> Both
                   </Typography>
                   <Box display="flex" mt="10px">
@@ -83,7 +112,7 @@ const Both = () => {
                       View Details
                     </Button>
                   </Box>
-                </CardContent>
+                </Box>
               </Card>
             </Grid>
           ))}
@@ -91,16 +120,38 @@ const Both = () => {
       )}
 
       {selectedUser && (
-        <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-          <DialogTitle>User Details</DialogTitle>
+        <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth
+                PaperProps={{
+                  sx: {
+                    backgroundColor: isDarkMode ? '#333' : '#fff',
+                    color: isDarkMode ? 'white' : 'black',
+                  },
+                }}
+        >
+          <DialogTitle sx={{ color: isDarkMode ? 'white' : 'black' }}>User Details</DialogTitle>
           <DialogContent>
-            <Typography variant="h6">{`${selectedUser.first_name} ${selectedUser.middle_name || ''} ${selectedUser.last_name}`}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Phone:</strong> {selectedUser.phone_number}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              <strong>Address:</strong> {selectedUser.address}
-            </Typography>
+            <Box display="flex" alignItems="center">
+              <Avatar
+                src={`http://10.139.161.59:8000/uploads/${selectedUser.profile_picture}`}
+                alt={`${selectedUser.user_name}`}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  marginRight: 2,
+                }}
+              />
+              <Box>
+                <Typography variant="h6" sx={{ fontSize: '1.25rem', color: isDarkMode ? 'white' : 'black' }}>
+                  {`${selectedUser.first_name} ${selectedUser.middle_name || ''}`}
+                </Typography>
+                <Typography variant="body2" color={isDarkMode ? 'white' : 'text.secondary'}>
+                  <strong>Phone:</strong> {selectedUser.phone_number}
+                </Typography>
+                <Typography variant="body2" color={isDarkMode ? 'white' : 'text.secondary'}>
+                  <strong>Address:</strong> {selectedUser.address}
+                </Typography>
+              </Box>
+            </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseDialog} color="primary">
@@ -109,6 +160,31 @@ const Both = () => {
           </DialogActions>
         </Dialog>
       )}
+
+      {/* Image Popup Dialog */}
+      <Dialog open={imageOpen} onClose={handleCloseImageDialog} maxWidth="md" fullWidth>
+        <DialogTitle>Profile Picture</DialogTitle>
+        <DialogContent>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <img
+              src={selectedImage}
+              alt="Profile"
+              style={{
+                width: '100%',
+                height: 'auto',
+                maxWidth: '500px',
+                maxHeight: '500px',
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseImageDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

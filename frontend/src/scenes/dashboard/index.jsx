@@ -12,15 +12,20 @@ import LineChart from "../../components/LineChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 
+// Additional imports for new icons
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn"; // For revenue
+import EventNoteIcon from "@mui/icons-material/EventNote"; // For daily bookings
+
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // State to store the total number of users, properties, transactions, and rents
+  // State to store the total number of users, properties, transactions, rents, and balance
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalProperties, setTotalProperties] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
   const [totalRents, setTotalRents] = useState(0);
+  const [balance, setBalance] = useState(null); // Added state for balance
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -28,17 +33,19 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersResponse, propertiesResponse, transactionsResponse, rentsResponse] = await Promise.all([
-          axios.get("https://renteaseadmin.onrender.com/admin/total-users"),
-          axios.get("https://renteaseadmin.onrender.com/admin/total-properties"),
-          axios.get("https://renteaseadmin.onrender.com/admin/total-transactions"),
-          axios.get("https://renteaseadmin.onrender.com/admin/total-rents"),
+        const [usersResponse, propertiesResponse, transactionsResponse, rentsResponse, balanceResponse] = await Promise.all([
+          axios.get("http://localhost:5000/admin/total-users"),
+          axios.get("http://localhost:5000/admin/total-properties"),
+          axios.get("http://localhost:5000/admin/total-transactions"),
+          axios.get("http://localhost:5000/admin/total-rents"),
+          axios.get("http://localhost:5000/admin/balance?user_id=66e05fd6bfa431de8dafab89"), // Fetching balance
         ]);
 
         setTotalUsers(usersResponse.data.totalUsers);
         setTotalProperties(propertiesResponse.data.totalProperties);
         setTotalTransactions(transactionsResponse.data.totalTransactions);
         setTotalRents(rentsResponse.data.totalRents);
+        setBalance(balanceResponse.data.balance); // Setting balance
       } catch (error) {
         setError("Failed to fetch data.");
         console.error("Error fetching data:", error);
@@ -160,60 +167,57 @@ const Dashboard = () => {
 
         {/* ROW 2 */}
         <Box
-          gridColumn="span 8"
-          gridRow="span 2"
+          gridColumn="span 7"
+          gridRow="span 3"
           backgroundColor={colors.primary[400]}
         >
           <Box
             mt="25px"
             p="0 30px"
-            display="flex "
+            display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Revenue Generated
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography>
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
+            <Box display="flex" alignItems="center">
+              <Box>
+                <Typography
+                  variant="h5"
+                  fontWeight="600"
+                  color={colors.grey[100]}
+                >
+                  Revenue Generated
+                </Typography>
+                <Typography
+                  variant="h3"
+                  fontWeight="bold"
+                  color={colors.greenAccent[500]}
+                >
+                  {balance !== null ? `$${balance.toLocaleString()}` : "Loading..."}
+                </Typography>
+              </Box>
             </Box>
           </Box>
-          <Box height="250px" m="-20px 0 0 0">
+          <Box height="290px" m="10px 0 0 0">
             <LineChart isDashboard={true} />
           </Box>
         </Box>
 
         {/* ROW 3 */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
+          gridColumn="span 5"
+          gridRow="span 3"
           backgroundColor={colors.primary[400]}
         >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            Sales Quantity
-          </Typography>
-          <Box height="250px" mt="-20px">
+          <Box display="flex" alignItems="center" p="30px">
+            <EventNoteIcon sx={{ color: colors.greenAccent[500], fontSize: "30px", mr: 1 }} />
+            <Typography
+              variant="h5"
+              fontWeight="600"
+            >
+              Daily Bookings
+            </Typography>
+          </Box>
+          <Box height="290px" mt="10px">
             <BarChart isDashboard={true} />
           </Box>
         </Box>

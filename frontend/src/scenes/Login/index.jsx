@@ -60,7 +60,7 @@ const LoginForm = ({ onLogin }) => {
     setLoading(true); // Start loading
 
     try {
-      const response = await axios.post("https://renteaseadmin.onrender.com/admin/signIn", {
+      const response = await axios.post("http://localhost:5000/admin/signIn", {
         user_name: username,
         password
       });

@@ -1,17 +1,48 @@
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
-import { mockBarData as data } from "../data/mockData";
+import { useState, useEffect } from "react";
 
 const BarChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/admin/bookings/count-per-day-of-week"); 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const jsonData = await response.json();
+
+        // Ensure all days of the week are present and map the data
+        const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const completeData = allDays.map(day => {
+          const existingData = jsonData.find(item => item.day === day);
+          return existingData ? { day, count: existingData.count } : { day, count: 0 };
+        });
+
+        setData(completeData);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } 
+    };
+
+    // Fetch data on mount
+    fetchData();
+
+    // Fetch new data every week (or periodically, e.g., every hour/day)
+    const interval = setInterval(fetchData, 7 * 24 * 60 * 60 * 1000); // weekly interval
+    return () => clearInterval(interval);  // Clean up the interval on component unmount
+
+  }, []);
 
   return (
     <ResponsiveBar
       data={data}
       theme={{
-        // added
         axis: {
           domain: {
             line: {
@@ -39,8 +70,8 @@ const BarChart = ({ isDashboard = false }) => {
           },
         },
       }}
-      keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
-      indexBy="country"
+      keys={["count"]}
+      indexBy="day"
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       padding={0.3}
       valueScale={{ type: "linear" }}
@@ -76,7 +107,7 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "country", // changed
+        legend: isDashboard ? undefined : "Day",
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -84,9 +115,12 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "food", // changed
+        legend: isDashboard ? undefined : "Count",
         legendPosition: "middle",
         legendOffset: -40,
+        // Custom tick formatting to display only integer values
+        tickValues: 5, // You can adjust this value to display the desired number of ticks
+        format: value => Math.round(value), // Round values to the nearest integer
       }}
       enableLabel={false}
       labelSkipWidth={12}
@@ -121,7 +155,7 @@ const BarChart = ({ isDashboard = false }) => {
       ]}
       role="application"
       barAriaLabel={function (e) {
-        return e.id + ": " + e.formattedValue + " in country: " + e.indexValue;
+        return e.id + ": " + e.formattedValue + " in day: " + e.indexValue;
       }}
     />
   );

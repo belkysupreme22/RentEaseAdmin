@@ -14,21 +14,21 @@ const Commission = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const [filteredTransactions, setFilteredTransactions] = useState([]); // State for filtered transactions
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [selectedTypes, setSelectedTypes] = useState({
     "own-deposit": false,
     "transfer": false,
     "service_fee": false,
     "withdrawal": false,
     "deposit": false
-  }); // State for checkbox values
+  });
 
   // Function to fetch balance
   const fetchBalance = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/balance?user_id=66e05fd6bfa431de8dafab89");
+      const response = await axios.get("http://localhost:5000/admin/balance?user_id=66e05fd6bfa431de8dafab89");
       setBalance(response.data.balance);
       setBalanceVisible(true);
     } catch (err) {
@@ -44,10 +44,10 @@ const Commission = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/transactions");
+      const response = await axios.get("http://localhost:5000/admin/transactions");
       const sortedTransactions = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setTransactions(sortedTransactions);
-      setFilteredTransactions(sortedTransactions); // Initially, show all transactions
+      setFilteredTransactions(sortedTransactions);
     } catch (err) {
       console.error("Error fetching transactions:", err);
       setError("Failed to fetch transactions. Please try again.");
@@ -76,7 +76,7 @@ const Commission = () => {
     const activeFilters = Object.keys(selectedTypes).filter((type) => selectedTypes[type]);
 
     if (activeFilters.length === 0) {
-      setFilteredTransactions(transactions); // Show all if no filters selected
+      setFilteredTransactions(transactions);
     } else {
       const filtered = transactions.filter((transaction) => activeFilters.includes(transaction.type));
       setFilteredTransactions(filtered);
@@ -85,6 +85,14 @@ const Commission = () => {
 
   useEffect(() => {
     fetchTransactions();
+
+    // Set up polling to fetch transactions every 10 seconds
+    const intervalId = setInterval(() => {
+      fetchTransactions();
+    }, 10000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -145,13 +153,13 @@ const Commission = () => {
       </Box>
 
       {/* Filter Section */}
-      <Box display="flex"  alignItems="flex-start" gap={2} mb={2} mt={4}>
+      <Box display="flex" alignItems="flex-start" gap={2} mb={2} mt={4}>
         <Typography variant="h4" fontWeight="bold" sx={{ flexShrink: 0 }}>
           Filter Transactions
         </Typography>
         <FormGroup
           row
-          sx={{ display: 'flex', flexDirection: 'row', gap: 2 }} // Align checkboxes horizontally
+          sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}
         >
           {Object.keys(selectedTypes).map((type) => (
             <FormControlLabel
@@ -162,23 +170,23 @@ const Commission = () => {
                   onChange={handleCheckboxChange}
                   name={type}
                   sx={{
-                    width: "10px", // Increase checkbox size
-                    height: "10px", // Increase checkbox size
+                    width: "10px",
+                    height: "10px",
                     paddingRight:'1rem',
                     color: theme.palette.mode === "dark" ? "#ffffff" : "#000000",
                     '&.Mui-checked': {
-                      color: theme.palette.mode === "dark" ? "#ffffff" : "#2980b9", // White checkmark for dark mode
+                      color: theme.palette.mode === "dark" ? "#ffffff" : "#2980b9",
                     },
                   }}
                 />
               }
               label={type.replace("_", " ")}
               sx={{
-                fontSize: "1.15rem", // Larger font for the label
+                fontSize: "1.15rem",
                 color: theme.palette.mode === "dark" ? "#ffffff" : "#000000",
                 ml: 1,
                 '& .MuiFormControlLabel-label': {
-                  fontSize: '1.15rem', // Increase label font size
+                  fontSize: '1.15rem',
                 }
               }}
             />
@@ -239,15 +247,14 @@ const Commission = () => {
               display="grid"
               gridTemplateColumns="repeat(5, 1fr)"
               gap="10px"
-              alignItems="center"
-              borderBottom={`1px solid ${theme.palette.mode === "dark" ? colors.primary[700] : "#dcdcdc"}`}
               p="10px 0"
+              borderBottom={`1px solid ${theme.palette.mode === "dark" ? colors.primary[700] : "#dcdcdc"}`}
             >
               <Typography>{index + 1}</Typography>
               <Typography>{transaction.user_id.user_name}</Typography>
               <Typography>{transaction.type}</Typography>
               <Typography>{new Date(transaction.createdAt).toLocaleDateString()}</Typography>
-              <Typography>${transaction.amount}</Typography>
+              <Typography>${transaction.amount.toFixed(2)}</Typography>
             </Box>
           ))}
         </Box>

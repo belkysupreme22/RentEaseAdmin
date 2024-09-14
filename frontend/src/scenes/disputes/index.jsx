@@ -13,7 +13,7 @@ const DisputesPage = () => {
   useEffect(() => {
     const fetchDisputes = async () => {
       try {
-        const response = await axios.get('https://renteaseadmin.onrender.com/admin/disputes'); // Update with your backend URL
+        const response = await axios.get('http://localhost:5000/admin/disputes'); // Update with your backend URL
         setDisputes(response.data);
       } catch (error) {
         setError(error.message);
@@ -60,10 +60,10 @@ const DisputesPage = () => {
                   {dispute.image.map((img, index) => (
                     <img
                       key={index}
-                      src={`http://10.139.167.95:8000/uploads/${img}`}
+                      src={`http://10.139.161.59:8000/uploads/${img}`}
                       alt={`Dispute Image ${index + 1}`}
                       style={{ width: "80px", height: "80px", cursor: "pointer", objectFit: "cover" }}
-                      onClick={() => handleOpenDialog(`http://10.139.167.95:8000/uploads/${img}`)}
+                      onClick={() => handleOpenDialog(`http://10.139.161.59:8000/uploads/${img}`)}
                     />
                   ))}
                 </Box>

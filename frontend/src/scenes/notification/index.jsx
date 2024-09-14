@@ -35,7 +35,7 @@ const NotificationsPage = () => {
     fetchData(); // Initial fetch
     const intervalId = setInterval(() => {
       fetchData(); // Fetch data every 10 seconds
-    }, 10000);
+    }, 1000);
 
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);

@@ -84,7 +84,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get("https://renteaseadmin.onrender.com/admin/profile");
+        const response = await axios.get("http://localhost:5000/admin/profile");
         setAdminData({
           username: response.data.username || 'Username',
           role: response.data.role || 'Role',

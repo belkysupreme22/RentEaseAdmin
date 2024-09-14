@@ -1,11 +1,84 @@
 import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
-import { mockLineData as data } from "../data/mockData";
+import { useState, useEffect } from "react";
+import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); // Add a loading state
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/admin/transactions/weekly");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const jsonData = await response.json();
+
+      // Transform fetched data to match the chart format
+      const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const transformedData = daysOfWeek.map(day => {
+        const dayData = jsonData.find(item => item.day === day);
+        return {
+          x: day,
+          y: dayData ? dayData.totalAmount : 0
+        };
+      });
+
+      console.log('Transformed Data:', transformedData);
+
+      setData([{
+        id: "Total Amount",
+        color: "hsl(196, 70%, 50%)",
+        data: transformedData
+      }]);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false); // Set loading to false when data fetch is complete
+    }
+  };
+
+  useEffect(() => {
+    // Fetch data on mount
+    fetchData();
+
+    // Fetch new data every week
+    const interval = setInterval(fetchData, 7 * 24 * 60 * 60 * 1000); // Weekly interval
+    return () => clearInterval(interval);  // Clean up the interval on component unmount
+
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <CircularProgress /> {/* Spinning circle loader */}
+      </div>
+    );
+  }
+
+  if (!data.length) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        No Data Available
+      </div>
+    ); // Display a message if no data
+  }
 
   return (
     <ResponsiveLine
@@ -43,9 +116,15 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
           },
         },
       }}
-      colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
+      colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }}
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-      xScale={{ type: "point" }}
+      xScale={{ 
+        type: "point",
+        min: 'auto',
+        max: 'auto',
+        includeZero: false,
+        align: 'middle'
+      }}
       yScale={{
         type: "linear",
         min: "auto",
@@ -62,17 +141,18 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "transportation", // added
+        legend: isDashboard ? undefined : "Day of Week",
         legendOffset: 36,
         legendPosition: "middle",
+        format: value => value // Ensure all days are shown
       }}
       axisLeft={{
         orient: "left",
-        tickValues: 5, // added
+        tickValues: 5,
         tickSize: 3,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "count", // added
+        legend: isDashboard ? undefined : "Total Amount",
         legendOffset: -40,
         legendPosition: "middle",
       }}

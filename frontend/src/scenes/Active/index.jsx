@@ -11,6 +11,7 @@ const Active = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [pageInput, setPageInput] = useState(currentPage);
+  const [imageIndexes, setImageIndexes] = useState({}); // Track image index for each card
 
   const fetchActivePosts = async (page = 1) => {
     try {
@@ -23,6 +24,13 @@ const Active = () => {
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
       setPageInput(data.currentPage);
+
+      // Initialize image indexes for each post
+      const initialIndexes = data.properties.reduce((acc, post) => {
+        acc[post._id] = 0; // Set initial image index to 0
+        return acc;
+      }, {});
+      setImageIndexes(initialIndexes);
     } catch (error) {
       console.error("Error fetching active properties:", error);
     } finally {
@@ -51,6 +59,23 @@ const Active = () => {
     }
   };
 
+  // Handle image navigation for specific card
+  const handleNextImage = (postId) => {
+    setImageIndexes((prevIndexes) => {
+      const currentIndex = prevIndexes[postId];
+      const newIndex = (currentIndex + 1) % activePosts.find(post => post._id === postId).image.length;
+      return { ...prevIndexes, [postId]: newIndex };
+    });
+  };
+
+  const handlePrevImage = (postId) => {
+    setImageIndexes((prevIndexes) => {
+      const currentIndex = prevIndexes[postId];
+      const newIndex = (currentIndex - 1 + activePosts.find(post => post._id === postId).image.length) % activePosts.find(post => post._id === postId).image.length;
+      return { ...prevIndexes, [postId]: newIndex };
+    });
+  };
+
   return (
     <Box m="20px">
       <Header title="ACTIVE POST" subtitle="List of Active Posts" />
@@ -71,18 +96,63 @@ const Active = () => {
                 <Card
                   sx={{
                     backgroundColor: 'transparent',
-                    boxShadow: 'none',
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Added box shadow
                     borderRadius: '16px',
                     border: '1px solid rgba(0, 0, 0, 0.1)',
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image={`http://10.139.167.95:8000/uploads/${post.image[0]}`}
-                    alt={post.property_name}
-                    sx={{ borderRadius: '16px 16px 0 0' }}
-                  />
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      height: '140px',
+                      overflow: 'hidden',
+                      borderRadius: '16px 16px 0 0',
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      image={`http://10.139.161.59:8000/uploads/${post.image[imageIndexes[post._id]]}`}
+                      alt={post.property_name}
+                      sx={{ borderRadius: '16px 16px 0 0', objectFit: 'cover' }}
+                    />
+                    {post.image.length > 1 && (
+                      <>
+                        <Button
+                          onClick={() => handlePrevImage(post._id)}
+                          sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '10px',
+                            transform: 'translateY(-50%)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            },
+                          }}
+                        >
+                          &lt;
+                        </Button>
+                        <Button
+                          onClick={() => handleNextImage(post._id)}
+                          sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            },
+                          }}
+                        >
+                          &gt;
+                        </Button>
+                      </>
+                    )}
+                  </Box>
                   <CardContent>
                     <Typography variant="h5" component="div">
                       {post.property_name}

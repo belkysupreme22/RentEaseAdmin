@@ -16,7 +16,7 @@ const Terms = () => {
     // Fetch terms and conditions from the backend
     const fetchTerms = async () => {
       try {
-        const response = await axios.get("https://renteaseadmin.onrender.com/admin/terms");
+        const response = await axios.get("http://localhost:5000/admin/terms");
         setTermsList(response.data);
       } catch (error) {
         console.error("Error fetching terms:", error);
@@ -28,12 +28,12 @@ const Terms = () => {
 
   const handleAddTerms = async () => {
     try {
-      await axios.post("https://renteaseadmin.onrender.com/admin/terms", {
+      await axios.post("http://localhost:5000/admin/terms", {
         content: terms,
         version: version,
       });
       // Refresh the terms list after adding
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/terms");
+      const response = await axios.get("http://localhost:5000/admin/terms");
       setTermsList(response.data);
       setTerms("");
       setVersion("");
@@ -44,9 +44,9 @@ const Terms = () => {
 
   const handleUpdateTerms = async (id) => {
     try {
-      await axios.put(`https://renteaseadmin.onrender.com/admin/terms/${id}`, { content: terms });
+      await axios.put(`http://localhost:5000/admin/terms/${id}`, { content: terms });
       // Refresh the terms list after updating
-      const response = await axios.get("hhttps://renteaseadmin.onrender.com/admin/terms");
+      const response = await axios.get("http://localhost:5000/admin/terms");
       setTermsList(response.data);
       setEditTerm(null);
       setTerms("");
@@ -59,9 +59,9 @@ const Terms = () => {
 
   const handleDeleteTerms = async (id) => {
     try {
-      await axios.delete(`https://renteaseadmin.onrender.com/admin/terms/${id}`);
+      await axios.delete(`http://localhost:5000/admin/terms/${id}`);
       // Refresh the terms list after deleting
-      const response = await axios.get("https://renteaseadmin.onrender.com/admin/terms");
+      const response = await axios.get("http://localhost:5000/admin/terms");
       setTermsList(response.data);
     } catch (error) {
       console.error("Error deleting terms:", error);
