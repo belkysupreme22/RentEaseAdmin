@@ -27,7 +27,7 @@ const Property = () => {
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const response = await fetch("hhttps://renteaseadmin.onrender.com/admin/properties/pending");
+      const response = await fetch("https://renteaseadmin.onrender.com/admin/properties/pending");
       const data = await response.json();
       setProperties(data);
     } catch (error) {
