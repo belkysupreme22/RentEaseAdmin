@@ -83,7 +83,7 @@ const Owners = () => {
                 <CardContent>
                   <Box display="flex" alignItems="center" mb={2}>
                     <Avatar
-                      src={`http://10.139.161.59:8000/uploads/${owner.profile_picture}`}
+                      src={`https://renteasebackend-orna.onrender.com//uploads/${owner.profile_picture}`}
                       alt={owner.user_name}
                       sx={{
                         width: 80,
@@ -92,7 +92,7 @@ const Owners = () => {
                         border: '2px solid #3498db',
                         cursor: 'pointer',
                       }}
-                      onClick={() => handleImageClick(`http://10.139.161.59:8000/uploads/${owner.profile_picture}`)}
+                      onClick={() => handleImageClick(`https://renteasebackend-orna.onrender.com//uploads/${owner.profile_picture}`)}
                     />
                     <Typography variant="h5" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
                       {owner.user_name}
@@ -122,7 +122,7 @@ const Owners = () => {
           <DialogContent>
             <Box display="flex" alignItems="center">
               <Avatar
-                src={`http://10.139.161.59:8000/uploads/${selectedOwner.profile_picture}`}
+                src={`https://renteasebackend-orna.onrender.com//uploads/${selectedOwner.profile_picture}`}
                 alt={`${selectedOwner.user_name}`}
                 sx={{
                   width: 100,

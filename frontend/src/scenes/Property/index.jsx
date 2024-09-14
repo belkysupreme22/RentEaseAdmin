@@ -161,7 +161,7 @@ const Property = () => {
                       <CardMedia
                         component="img"
                         height="140"
-                        image={`https://10.139.161.59:8000/uploads/${property.image[imageData[property._id]?.currentIndex || 0]}`}
+                        image={`https://renteasebackend-orna.onrender.com//uploads/${property.image[imageData[property._id]?.currentIndex || 0]}`}
                         alt="property"
                         sx={{ borderRadius: '8px', cursor: 'pointer' }}
                         onClick={() => handleOpenModal(property.image[imageData[property._id]?.currentIndex || 0])}
@@ -203,7 +203,7 @@ const Property = () => {
 
                   <Box display="flex" alignItems="center" mt="10px" gap="10px">
                     <img
-                      src={`https://10.139.161.59:8000/uploads/${property.ownerProfilePic}`}
+                      src={`https://renteasebackend-orna.onrender.com//uploads/${property.ownerProfilePic}`}
                       alt="Owner"
                       style={{
                         width: '50px',
@@ -271,7 +271,7 @@ const Property = () => {
             <Close />
           </IconButton>
           <img
-            src={`https://10.139.161.59:8000/uploads/${selectedImage}`}
+            src={`https://renteasebackend-orna.onrender.com//uploads/${selectedImage}`}
             alt="Property"
             style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
           />

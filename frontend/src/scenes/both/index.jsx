@@ -86,7 +86,7 @@ const Both = () => {
                 }}
               >
                 <Avatar
-                  src={`http://10.139.161.59:8000/uploads/${user.profile_picture}`}
+                  src={`https://renteasebackend-orna.onrender.com//uploads/${user.profile_picture}`}
                   alt={user.user_name}
                   sx={{
                     width: 80,
@@ -95,7 +95,7 @@ const Both = () => {
                     border: '2px solid #3498db',
                     cursor: 'pointer',
                   }}
-                  onClick={() => handleImageClick(`http://10.139.161.59:8000/uploads/${user.profile_picture}`)}
+                  onClick={() => handleImageClick(`https://renteasebackend-orna.onrender.com//uploads/${user.profile_picture}`)}
                 />
                 <Box>
                   <Typography variant="h5" component="div" sx={{ display: 'flex', alignItems: 'center', fontSize: '1.5rem', color: isDarkMode ? 'white' : 'black' }}>
@@ -132,7 +132,7 @@ const Both = () => {
           <DialogContent>
             <Box display="flex" alignItems="center">
               <Avatar
-                src={`http://10.139.161.59:8000/uploads/${selectedUser.profile_picture}`}
+                src={`https://renteasebackend-orna.onrender.com//uploads/${selectedUser.profile_picture}`}
                 alt={`${selectedUser.user_name}`}
                 sx={{
                   width: 100,
