@@ -82,7 +82,7 @@ const Tenants = () => {
                 <CardContent>
                   <Box display="flex" alignItems="center" mb={2}>
                     <Avatar
-                      src={`https://renteasebackend-orna.onrender.com//uploads/${tenant.profile_picture}`}
+                      src={`https://renteasebackend-orna.onrender.com/uploads/${tenant.profile_picture}`}
                       alt={tenant.user_name}
                       sx={{
                         width: 80,
@@ -91,7 +91,7 @@ const Tenants = () => {
                         border: '2px solid #3498db',
                         cursor: 'pointer',
                       }}
-                      onClick={() => handleImageClick(`https://renteasebackend-orna.onrender.com//uploads/${tenant.profile_picture}`)}
+                      onClick={() => handleImageClick(`https://renteasebackend-orna.onrender.com/uploads/${tenant.profile_picture}`)}
                     />
                     <Typography variant="h5" component="div" color={isDarkMode ? 'white' : 'black'}>
                       {tenant.user_name}
@@ -121,7 +121,7 @@ const Tenants = () => {
           <DialogContent>
             <Box display="flex" alignItems="center" mb={2}>
               <Avatar
-                src={`https://renteasebackend-orna.onrender.com//uploads/${selectedTenant.profile_picture}`}
+                src={`https://renteasebackend-orna.onrender.com/uploads/${selectedTenant.profile_picture}`}
                 alt={selectedTenant.user_name}
                 sx={{ width: 80, height: 80, marginRight: 2 }}
               />

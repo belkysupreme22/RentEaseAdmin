@@ -60,10 +60,10 @@ const DisputesPage = () => {
                   {dispute.image.map((img, index) => (
                     <img
                       key={index}
-                      src={`https://renteasebackend-orna.onrender.com//uploads/${img}`}
+                      src={`https://renteasebackend-orna.onrender.com/uploads/${img}`}
                       alt={`Dispute Image ${index + 1}`}
                       style={{ width: "80px", height: "80px", cursor: "pointer", objectFit: "cover" }}
-                      onClick={() => handleOpenDialog(`https://renteasebackend-orna.onrender.com//uploads/${img}`)}
+                      onClick={() => handleOpenDialog(`https://renteasebackend-orna.onrender.com/uploads/${img}`)}
                     />
                   ))}
                 </Box>

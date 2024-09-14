@@ -164,7 +164,7 @@ const Account = () => {
                 </Typography>
                   {selectedProfile.id_image ? (
                     <img
-                      src={`https://renteasebackend-orna.onrender.com//uploads/${selectedProfile.id_image}`}
+                      src={`https://renteasebackend-orna.onrender.com/uploads/${selectedProfile.id_image}`}
                       alt="ID Image"
                       style={{ maxWidth: '100%', borderRadius: '8px' }}
                     />

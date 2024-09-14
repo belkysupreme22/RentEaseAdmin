@@ -112,7 +112,7 @@ const Active = () => {
                     <CardMedia
                       component="img"
                       height="140"
-                      image={`https://renteasebackend-orna.onrender.com//uploads/${post.image[imageIndexes[post._id]]}`}
+                      image={`https://renteasebackend-orna.onrender.com/uploads/${post.image[imageIndexes[post._id]]}`}
                       alt={post.property_name}
                       sx={{ borderRadius: '16px 16px 0 0', objectFit: 'cover' }}
                     />

@@ -74,7 +74,7 @@ const Rented = () => {
               }}
             >
               <Avatar
-                src={`https://renteasebackend-orna.onrender.com//uploads/${item.property_image}`}
+                src={`https://renteasebackend-orna.onrender.com/uploads/${item.property_image}`}
                 alt="Property Image"
                 sx={{ width: 100, height: 100, cursor: 'pointer' }}
                 onClick={() => handleImageClick(item.property_image)}
@@ -156,7 +156,7 @@ const Rented = () => {
           </IconButton>
           <Box
             component="img"
-            src={`https://renteasebackend-orna.onrender.com//uploads/${selectedImage}`}
+            src={`https://renteasebackend-orna.onrender.com/uploads/${selectedImage}`}
             alt="Enlarged Property"
             sx={{
               width: '100%',
