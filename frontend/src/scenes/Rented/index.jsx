@@ -19,7 +19,7 @@ const Rented = () => {
   // Function to fetch rented items
   const fetchRentedItems = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/admin/rented");
+      const response = await axios.get("https://renteaseadmin.onrender.com/admin/rented");
       setRentedItems(response.data);
     } catch (err) {
       setError("Failed to fetch rented items.");

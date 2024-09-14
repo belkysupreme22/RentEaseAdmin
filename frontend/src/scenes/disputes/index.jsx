@@ -13,7 +13,7 @@ const DisputesPage = () => {
   useEffect(() => {
     const fetchDisputes = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/admin/disputes'); // Update with your backend URL
+        const response = await axios.get('https://renteaseadmin.onrender.com/admin/disputes'); // Update with your backend URL
         setDisputes(response.data);
       } catch (error) {
         setError(error.message);

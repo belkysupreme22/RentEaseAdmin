@@ -18,7 +18,7 @@ const Tenants = () => {
   const fetchTenants = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/admin/users/tenant");
+      const response = await fetch("https://renteaseadmin.onrender.com/admin/users/tenant");
       const data = await response.json();
       setTenants(data);
     } catch (error) {

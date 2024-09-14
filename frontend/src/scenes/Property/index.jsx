@@ -27,7 +27,7 @@ const Property = () => {
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/admin/properties/pending");
+      const response = await fetch("hhttps://renteaseadmin.onrender.com/admin/properties/pending");
       const data = await response.json();
       setProperties(data);
     } catch (error) {
@@ -40,7 +40,7 @@ const Property = () => {
   const handleAccept = async (propertyId) => {
     try {
       setLoading(true);
-      await fetch(`http://localhost:5000/admin/properties/accept/${propertyId}`, {
+      await fetch(`https://renteaseadmin.onrender.com/admin/properties/accept/${propertyId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const Property = () => {
   const handleReject = async (propertyId) => {
     try {
       setLoading(true);
-      await fetch(`http://localhost:5000/admin/properties/reject/${propertyId}`, {
+      await fetch(`https://renteaseadmin.onrender.com/admin/properties/reject/${propertyId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -12,7 +12,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/admin/transactions/weekly");
+      const response = await fetch("https://renteaseadmin.onrender.com/admin/transactions/weekly");
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }

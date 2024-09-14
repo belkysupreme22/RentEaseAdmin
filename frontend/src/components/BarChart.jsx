@@ -11,7 +11,7 @@ const BarChart = ({ isDashboard = false }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/admin/bookings/count-per-day-of-week"); 
+        const response = await fetch("https://renteaseadmin.onrender.com/admin/bookings/count-per-day-of-week"); 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

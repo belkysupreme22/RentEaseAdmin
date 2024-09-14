@@ -34,11 +34,11 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [usersResponse, propertiesResponse, transactionsResponse, rentsResponse, balanceResponse] = await Promise.all([
-          axios.get("http://localhost:5000/admin/total-users"),
-          axios.get("http://localhost:5000/admin/total-properties"),
-          axios.get("http://localhost:5000/admin/total-transactions"),
-          axios.get("http://localhost:5000/admin/total-rents"),
-          axios.get("http://localhost:5000/admin/balance?user_id=66e05fd6bfa431de8dafab89"), // Fetching balance
+          axios.get("https://renteaseadmin.onrender.com/admin/total-users"),
+          axios.get("https://renteaseadmin.onrender.com/admin/total-properties"),
+          axios.get("https://renteaseadmin.onrender.com/admin/total-transactions"),
+          axios.get("https://renteaseadmin.onrender.com/admin/total-rents"),
+          axios.get("https://renteaseadmin.onrender.com/admin/balance?user_id=66e05fd6bfa431de8dafab89"), // Fetching balance
         ]);
 
         setTotalUsers(usersResponse.data.totalUsers);
