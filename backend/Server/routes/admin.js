@@ -631,59 +631,41 @@ router.get("/disputes", async (req, res) => {
   }
 });
 
-router.get("/transactions/weekly", async (req, res) => {
+router.get("/transactions-per-day", async (req, res) => {
   try {
-    // Get the current date and the start of the week (Sunday)
-    const today = new Date();
-    const startOfWeek = new Date(
-      today.setDate(today.getDate() - today.getDay())
-    );
-
-    // Fetch transactions created from the start of the week onwards and group by the day of the week
+    // Aggregate transaction data by day of the week
     const transactions = await Transaction.aggregate([
       {
-        $match: {
-          createdAt: { $gte: startOfWeek },
-          status: "completed",
-        },
-      },
-      {
-        $project: {
-          dayOfWeek: { $dayOfWeek: "$createdAt" }, // Get day of the week (1 = Sunday, 7 = Saturday)
-          amount: 1,
-        },
-      },
-      {
         $group: {
-          _id: "$dayOfWeek", // Group by day of the week
-          totalAmount: { $sum: "$amount" }, // Sum the transaction amounts for each day
+          _id: { $dayOfWeek: "$createdAt" }, // Group by the day of the week (1 = Sunday, 7 = Saturday)
+          totalAmount: { $sum: "$amount" },
+          count: { $sum: 1 },
         },
-      },
-      {
-        $sort: { _id: 1 }, // Sort by day of the week (1 = Sunday, 7 = Saturday)
       },
     ]);
 
-    // Map day of the week to human-readable names
-    const dayNames = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+    // Days of the week array
+    const daysOfWeek = [
+      { day: "Sunday", totalAmount: 0, count: 0 },
+      { day: "Monday", totalAmount: 0, count: 0 },
+      { day: "Tuesday", totalAmount: 0, count: 0 },
+      { day: "Wednesday", totalAmount: 0, count: 0 },
+      { day: "Thursday", totalAmount: 0, count: 0 },
+      { day: "Friday", totalAmount: 0, count: 0 },
+      { day: "Saturday", totalAmount: 0, count: 0 },
     ];
 
-    // Format the response to include the day names
-    const formattedTransactions = transactions.map((transaction) => ({
-      day: dayNames[transaction._id - 1], // Convert day of the week number to name
-      totalAmount: transaction.totalAmount,
-    }));
+    // Update the daysOfWeek array with actual transaction data
+    transactions.forEach((transaction) => {
+      const dayIndex = transaction._id - 1; // Convert MongoDB dayOfWeek (1-7) to index (0-6)
+      daysOfWeek[dayIndex].totalAmount = transaction.totalAmount;
+      daysOfWeek[dayIndex].count = transaction.count;
+    });
 
-    res.json(formattedTransactions);
+    // Send response
+    res.json(daysOfWeek);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching transactions", error });
+    res.status(500).json({ error: error.message });
   }
 });
 
