@@ -2,29 +2,31 @@ import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { useState, useEffect } from "react";
-import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress
+import CircularProgress from '@mui/material/CircularProgress'; 
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true); // Add a loading state
+  const [loading, setLoading] = useState(true); 
 
   const fetchData = async () => {
     try {
-      const response = await fetch("https://renteaseadmin.onrender.com/admin/transactions/weekly");
+      const response = await fetch("https://renteaseadmin.onrender.com/admin/transactions-per-day");
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const jsonData = await response.json();
 
-      // Transform fetched data to match the chart format
+      // Days of the week array in the order we want
       const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      
+      // Transform fetched data to the format for Nivo Line Chart
       const transformedData = daysOfWeek.map(day => {
         const dayData = jsonData.find(item => item.day === day);
         return {
           x: day,
-          y: dayData ? dayData.totalAmount : 0
+          y: dayData ? dayData.totalAmount : 0 // Default to 0 if no data for the day
         };
       });
 
@@ -38,18 +40,15 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
     } catch (error) {
       console.error("Fetch error:", error);
     } finally {
-      setLoading(false); // Set loading to false when data fetch is complete
+      setLoading(false); 
     }
   };
 
   useEffect(() => {
-    // Fetch data on mount
     fetchData();
 
-    // Fetch new data every week
-    const interval = setInterval(fetchData, 7 * 24 * 60 * 60 * 1000); // Weekly interval
-    return () => clearInterval(interval);  // Clean up the interval on component unmount
-
+    const interval = setInterval(fetchData, 7 * 24 * 60 * 60 * 1000); // Refresh every week
+    return () => clearInterval(interval);  
   }, []);
 
   if (loading) {
@@ -61,7 +60,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        <CircularProgress /> {/* Spinning circle loader */}
+        <CircularProgress />
       </div>
     );
   }
@@ -77,7 +76,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
       }}>
         No Data Available
       </div>
-    ); // Display a message if no data
+    ); 
   }
 
   return (
