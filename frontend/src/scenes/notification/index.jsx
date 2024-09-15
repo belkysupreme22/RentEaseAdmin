@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, ToggleButton, ToggleButtonGroup, Badge, Button, Card, CardContent, CardActions, Divider, useTheme } from '@mui/material';
+import { Box, Typography, ToggleButton, ToggleButtonGroup, Badge, Button, Card, CardContent, CardActions, Divider, CircularProgress, useTheme } from '@mui/material';
 import { fetchVerifiedProfiles, fetchVerifiedProperties } from '../../api/notifications';
 import { useNavigate } from 'react-router-dom';
 
 const NotificationsPage = () => {
-  const [selectedToggle, setSelectedToggle] = useState('accounts');
+  const [selectedToggle, setSelectedToggle] = useState('accounts'); // Default selected toggle
   const [accounts, setAccounts] = useState([]);
   const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const handleToggleChange = (event, newToggle) => {
+  const handleToggleChange = async (event, newToggle) => {
     if (newToggle !== null) {
       setSelectedToggle(newToggle);
+      setLoading(true); // Set loading when the toggle changes
+      await fetchData(newToggle); // Fetch the data based on the new toggle
+      setLoading(false); // Stop loading once data is fetched
     }
   };
 
-  // Fetch data for notifications
-  const fetchData = async () => {
+  const fetchData = async (toggleValue) => {
     try {
-      if (selectedToggle === 'accounts') {
+      if (toggleValue === 'accounts') {
         const profilesData = await fetchVerifiedProfiles();
         setAccounts(profilesData);
-      } else if (selectedToggle === 'properties') {
+      } else if (toggleValue === 'properties') {
         const propertiesData = await fetchVerifiedProperties();
         setProperties(propertiesData);
       }
@@ -31,26 +34,17 @@ const NotificationsPage = () => {
     }
   };
 
+  // Fetch data on initial load
   useEffect(() => {
-    fetchData(); // Initial fetch
-    const intervalId = setInterval(() => {
-      fetchData(); // Fetch data every 10 seconds
-    }, 1000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
-  }, [selectedToggle]);
-
-  useEffect(() => {
-    fetchData(); // Fetch data on initial load
-  }, []);
+    fetchData(selectedToggle); 
+  }, [selectedToggle]); // Add selectedToggle to dependency array
 
   const handleViewDetails = (id) => {
     if (selectedToggle === 'accounts') {
       navigate('/account');
     } else if (selectedToggle === 'properties') {
       navigate('/property');
-    } 
+    }
   };
 
   return (
@@ -78,12 +72,12 @@ const NotificationsPage = () => {
               color: theme.palette.text.primary,
               border: `2px solid ${theme.palette.mode === 'light' ? 'black' : 'white'}`,
               '&.Mui-selected': {
-                color: theme.palette.text.primary,
-                backgroundColor: 'transparent',
-                borderColor: theme.palette.mode === 'light' ? 'black' : 'white',
+                color: theme.palette.mode === 'light' ? '#fff' : '#000', // Text color
+                backgroundColor: theme.palette.mode === 'light' ? '#003366' : '#fff', // Background color
+                borderColor: theme.palette.mode === 'light' ? '#003366' : '#fff', // Border color
               },
               '&:hover': {
-                backgroundColor: 'transparent',
+                backgroundColor: theme.palette.mode === 'light' ? '#e0e0e0' : '#555',
               },
             }}
           >
@@ -91,7 +85,7 @@ const NotificationsPage = () => {
               Accounts Verification
             </Badge>
           </ToggleButton>
-          
+
           <ToggleButton
             value="properties"
             sx={{
@@ -102,12 +96,12 @@ const NotificationsPage = () => {
               color: theme.palette.text.primary,
               border: `2px solid ${theme.palette.mode === 'light' ? 'black' : 'white'}`,
               '&.Mui-selected': {
-                color: theme.palette.text.primary,
-                backgroundColor: 'transparent',
-                borderColor: theme.palette.mode === 'light' ? 'black' : 'white',
+                color: theme.palette.mode === 'light' ? '#fff' : '#000', // Text color
+                backgroundColor: theme.palette.mode === 'light' ? '#003366' : '#fff', // Background color
+                borderColor: theme.palette.mode === 'light' ? '#003366' : '#fff', // Border color
               },
               '&:hover': {
-                backgroundColor: 'transparent',
+                backgroundColor: theme.palette.mode === 'light' ? '#e0e0e0' : '#555',
               },
             }}
           >
@@ -115,69 +109,73 @@ const NotificationsPage = () => {
               Properties Verification
             </Badge>
           </ToggleButton>
-          
-          
         </ToggleButtonGroup>
       </Box>
 
       <Box mt={4} display="flex" flexDirection="column" gap={2}>
-        {selectedToggle === 'accounts' && accounts.map((account, index) => (
-          <Card key={account._id} variant="outlined" sx={{ backgroundColor: theme.palette.mode === 'light' ? '#f5f5f5' : '#333', color: theme.palette.text.primary }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">{index + 1}. {account.first_name} {account.middle_name} {account.last_name}</Typography>
-              <Typography variant="body2">Verification Status: {account.verification}</Typography>
-              <Typography variant="body2">Created Date: {new Date(account.createdAt).toLocaleDateString()}</Typography>
-            </CardContent>
-            <Divider />
-            <CardActions>
-              <Button
-                size="small"
-                color="primary"
-                sx={{
-                  backgroundColor: theme.palette.mode === 'light' ? '#007bff' : '#0056b3',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: theme.palette.mode === 'light' ? '#0056b3' : '#003d7a',
-                  },
-                }}
-                onClick={() => handleViewDetails(account._id)}
-              >
-                View Details
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
+        {loading ? ( // Show loading spinner when data is being fetched
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <CircularProgress color={theme.palette.mode === 'light' ? 'primary' : 'secondary'} />
+          </Box>
+        ) : (
+          <>
+            {selectedToggle === 'accounts' && accounts.map((account, index) => (
+              <Card key={account._id} variant="outlined" sx={{ backgroundColor: theme.palette.mode === 'light' ? '#f5f5f5' : '#333', color: theme.palette.text.primary }}>
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold">{index + 1}. {account.first_name} {account.middle_name} {account.last_name}</Typography>
+                  <Typography variant="body2">Verification Status: {account.verification}</Typography>
+                  <Typography variant="body2">Created Date: {new Date(account.createdAt).toLocaleDateString()}</Typography>
+                </CardContent>
+                <Divider />
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    sx={{
+                      backgroundColor: theme.palette.mode === 'light' ? '#007bff' : '#0056b3',
+                      color: '#fff',
+                      '&:hover': {
+                        backgroundColor: theme.palette.mode === 'light' ? '#0056b3' : '#003d7a',
+                      },
+                    }}
+                    onClick={() => handleViewDetails(account._id)}
+                  >
+                    View Details
+                  </Button>
+                </CardActions>
+              </Card>
+            ))}
 
-        {selectedToggle === 'properties' && properties.map((property, index) => (
-          <Card key={property._id} variant="outlined" sx={{ backgroundColor: theme.palette.mode === 'light' ? '#f5f5f5' : '#333', color: theme.palette.text.primary }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold">{index + 1}. {property.property_name}</Typography>
-              <Typography variant="body2">Category: {property.category}</Typography>
-              <Typography variant="body2">Price: ${property.price}</Typography>
-              <Typography variant="body2">Status: {property.status ? 'Active' : 'Inactive'}</Typography>
-              <Typography variant="body2">Created Date: {new Date(property.createdAt).toLocaleDateString()}</Typography>
-            </CardContent>
-            <Divider />
-            <CardActions>
-              <Button
-                size="small"
-                color="primary"
-                sx={{
-                  backgroundColor: theme.palette.mode === 'light' ? '#007bff' : '#0056b3',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: theme.palette.mode === 'light' ? '#0056b3' : '#003d7a',
-                  },
-                }}
-                onClick={() => handleViewDetails(property._id)}
-              >
-                View Details
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
-
-       
+            {selectedToggle === 'properties' && properties.map((property, index) => (
+              <Card key={property._id} variant="outlined" sx={{ backgroundColor: theme.palette.mode === 'light' ? '#f5f5f5' : '#333', color: theme.palette.text.primary }}>
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold">{index + 1}. {property.property_name}</Typography>
+                  <Typography variant="body2">Category: {property.category}</Typography>
+                  <Typography variant="body2">Price: ${property.price}</Typography>
+                  <Typography variant="body2">Status: {property.status ? 'Active' : 'Inactive'}</Typography>
+                  <Typography variant="body2">Created Date: {new Date(property.createdAt).toLocaleDateString()}</Typography>
+                </CardContent>
+                <Divider />
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    sx={{
+                      backgroundColor: theme.palette.mode === 'light' ? '#007bff' : '#0056b3',
+                      color: '#fff',
+                      '&:hover': {
+                        backgroundColor: theme.palette.mode === 'light' ? '#0056b3' : '#003d7a',
+                      },
+                    }}
+                    onClick={() => handleViewDetails(property._id)}
+                  >
+                    View Details
+                  </Button>
+                </CardActions>
+              </Card>
+            ))}
+          </>
+        )}
       </Box>
     </Box>
   );
